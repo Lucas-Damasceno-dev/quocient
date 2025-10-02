@@ -5,6 +5,7 @@ import type { QuizConfig } from '@/types/quiz';
 import { ConfigForm } from './ConfigForm';
 import { SET_CONFIG, SET_QUESTIONS, SET_LOADING, SET_ERROR, START_QUIZ } from '@/context/QuizContext';
 import { useNavigate } from 'react-router-dom';
+import { validateQuizConfig } from '@/validation/validators';
 
 const QuizConfigPage = () => {
   const { state, dispatch } = useQuiz();
@@ -38,6 +39,15 @@ const QuizConfigPage = () => {
   };
 
   const handleStartQuiz = async () => {
+    // Validate the configuration before starting the quiz
+    const validationResult = validateQuizConfig(state.config);
+    
+    if (!validationResult.isValid) {
+      const errorMessage = validationResult.errors.join(', ') || 'Invalid configuration';
+      setError(errorMessage);
+      return;
+    }
+    
     try {
       setIsLoadingQuestions(true);
       setError(null);

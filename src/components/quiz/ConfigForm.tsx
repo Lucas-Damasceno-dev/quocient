@@ -3,6 +3,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { useState, useEffect } from 'react';
+import { validateQuizConfigField } from '@/validation/validators';
 import type { QuizConfig } from '@/types/quiz';
 
 interface Category {
@@ -26,12 +28,25 @@ export function ConfigForm({
   isLoading
 }: ConfigFormProps) {
   const { numberOfQuestions, categoryId, difficulty, type } = config;
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Validate fields in real-time
+  useEffect(() => {
+    const newErrors: Record<string, string> = {};
+    
+    // Validate number of questions
+    const numberValidation = validateQuizConfigField('numberOfQuestions', numberOfQuestions);
+    if (!numberValidation.isValid) {
+      newErrors.numberOfQuestions = numberValidation.error || '';
+    }
+    
+    setErrors(newErrors);
+  }, [numberOfQuestions]);
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1;
-    // Limit between 1 and 50 questions
-    const clampedValue = Math.min(Math.max(value, 1), 50);
-    onConfigChange({ ...config, numberOfQuestions: clampedValue });
+    // Update the configuration
+    onConfigChange({ ...config, numberOfQuestions: value });
   };
 
   const handleCategoryChange = (value: string) => {
@@ -55,7 +70,7 @@ export function ConfigForm({
     });
   };
 
-  const isFormValid = numberOfQuestions > 0;
+  const isFormValid = numberOfQuestions > 0 && !errors.numberOfQuestions;
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -74,8 +89,11 @@ export function ConfigForm({
             max="50"
             value={numberOfQuestions}
             onChange={handleNumberChange}
-            className="w-full"
+            className={`w-full ${errors.numberOfQuestions ? 'border-red-500' : ''}`}
           />
+          {errors.numberOfQuestions && (
+            <p className="text-red-500 text-sm">{errors.numberOfQuestions}</p>
+          )}
         </div>
 
         <div className="space-y-2">
