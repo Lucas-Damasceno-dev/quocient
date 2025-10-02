@@ -64,7 +64,9 @@ export function ConfigForm({
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="number-of-questions">Number of Questions</Label>
+          <Label htmlFor="number-of-questions" className="flex items-center">
+            Number of Questions <span className="text-red-500 ml-1">*</span>
+          </Label>
           <Input
             id="number-of-questions"
             type="number"
@@ -77,7 +79,9 @@ export function ConfigForm({
         </div>
 
         <div className="space-y-2">
-          <Label>Category</Label>
+          <Label className="flex items-center">
+            Category <span className="text-red-500 ml-1">*</span>
+          </Label>
           <Select value={categoryId?.toString() || 'any'} onValueChange={handleCategoryChange}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a category" />
