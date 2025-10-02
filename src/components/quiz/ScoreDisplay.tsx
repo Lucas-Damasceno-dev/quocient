@@ -35,7 +35,7 @@ export function ScoreDisplay({ score, total, onRestart }: ScoreDisplayProps) {
           You answered {score} out of {total} questions correctly.
         </p>
         <div className="pt-4">
-          <Button onClick={onRestart} className="w-full">
+          <Button onClick={onRestart} variant="default" size="lg" className="w-full">
             Play Again
           </Button>
         </div>
