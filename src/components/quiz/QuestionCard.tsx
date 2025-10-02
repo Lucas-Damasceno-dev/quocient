@@ -3,9 +3,9 @@ import { AnswerOption } from './AnswerOption';
 import { Button } from '@/components/ui/button';
 
 interface Question {
-  id: string;
-  text: string;
-  options: string[];
+  id?: string;
+  text: string; // alias for question
+  options: string[]; // combined answers
   category: string;
   difficulty: string;
 }

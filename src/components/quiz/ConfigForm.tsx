@@ -3,13 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-
-interface QuizConfig {
-  numberOfQuestions: number;
-  categoryId?: number;
-  difficulty?: 'easy' | 'medium' | 'hard';
-  type?: 'multiple' | 'boolean';
-}
+import type { QuizConfig } from '@/types/quiz';
 
 interface Category {
   id: number;
