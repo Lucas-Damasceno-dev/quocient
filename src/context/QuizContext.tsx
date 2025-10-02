@@ -170,6 +170,23 @@ const quizReducer = (state: QuizState, action: QuizAction): QuizState => {
 interface QuizContextType {
   state: QuizState;
   dispatch: React.Dispatch<QuizAction>;
+  // Helper methods
+  setConfig: (config: QuizConfig) => void;
+  setQuestions: (questions: Question[]) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  setCurrentQuestion: (index: number) => void;
+  addUserAnswer: (answer: Answer) => void;
+  resetQuiz: () => void;
+  startQuiz: () => void;
+  completeQuiz: () => void;
+  // Additional helper methods
+  getCurrentQuestion: () => Question | undefined;
+  getScore: () => number;
+  getProgress: () => number;
+  getAllAnswers: () => Answer[];
+  isQuizCompleted: () => boolean;
+  isQuizStarted: () => boolean;
 }
 
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
@@ -182,8 +199,89 @@ interface QuizProviderProps {
 export const QuizProvider = ({ children }: QuizProviderProps) => {
   const [state, dispatch] = useReducer(quizReducer, initialState);
 
+  // Helper methods
+  const setConfig = (config: QuizConfig) => {
+    dispatch({ type: SET_CONFIG, payload: config });
+  };
+
+  const setQuestions = (questions: Question[]) => {
+    dispatch({ type: SET_QUESTIONS, payload: questions });
+  };
+
+  const setLoading = (loading: boolean) => {
+    dispatch({ type: SET_LOADING, payload: loading });
+  };
+
+  const setError = (error: string | null) => {
+    dispatch({ type: SET_ERROR, payload: error });
+  };
+
+  const setCurrentQuestion = (index: number) => {
+    dispatch({ type: SET_CURRENT_QUESTION, payload: index });
+  };
+
+  const addUserAnswer = (answer: Answer) => {
+    dispatch({ type: ADD_USER_ANSWER, payload: answer });
+  };
+
+  const resetQuiz = () => {
+    dispatch({ type: RESET_QUIZ });
+  };
+
+  const startQuiz = () => {
+    dispatch({ type: START_QUIZ });
+  };
+
+  const completeQuiz = () => {
+    dispatch({ type: COMPLETE_QUIZ });
+  };
+
+  const getCurrentQuestion = (): Question | undefined => {
+    return state.questions[state.currentQuestionIndex];
+  };
+
+  const getScore = (): number => {
+    return state.userAnswers.filter(answer => answer.isCorrect).length;
+  };
+
+  const getProgress = (): number => {
+    return state.currentQuestionIndex + 1;
+  };
+
+  const getAllAnswers = (): Answer[] => {
+    return state.userAnswers;
+  };
+
+  const isQuizCompleted = (): boolean => {
+    return state.quizCompleted;
+  };
+
+  const isQuizStarted = (): boolean => {
+    return state.quizStarted;
+  };
+
   return (
-    <QuizContext.Provider value={{ state, dispatch }}>
+    <QuizContext.Provider 
+      value={{ 
+        state, 
+        dispatch,
+        setConfig,
+        setQuestions,
+        setLoading,
+        setError,
+        setCurrentQuestion,
+        addUserAnswer,
+        resetQuiz,
+        startQuiz,
+        completeQuiz,
+        getCurrentQuestion,
+        getScore,
+        getProgress,
+        getAllAnswers,
+        isQuizCompleted,
+        isQuizStarted
+      }}
+    >
       {children}
     </QuizContext.Provider>
   );
