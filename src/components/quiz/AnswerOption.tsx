@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 
 interface AnswerOptionProps {
   text: string;
@@ -37,18 +38,25 @@ export function AnswerOption({
   }
 
   return (
-    <Button
-      variant={buttonVariant}
-      className={`w-full justify-start text-left p-3 sm:p-4 text-sm sm:text-base ${additionalStyles}`}
-      onClick={onSelect}
-      disabled={disabled}
-    >
-      {icon && (
-        <span className="mr-3 font-bold">
-          {icon}
-        </span>
-      )}
-      {text}
-    </Button>
+    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+      <Button
+        variant={buttonVariant}
+        className={`w-full justify-start text-left p-3 sm:p-4 text-sm sm:text-base ${additionalStyles}`}
+        onClick={onSelect}
+        disabled={disabled}
+      >
+        {icon && (
+          <motion.span
+            className="mr-3 font-bold"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {icon}
+          </motion.span>
+        )}
+        {text}
+      </Button>
+    </motion.div>
   );
 }

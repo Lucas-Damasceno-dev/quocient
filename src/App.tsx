@@ -1,54 +1,113 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { QuizProvider } from './context';
 import QuizConfigPage from './components/quiz/QuizConfigPage';
 import QuizPage from './components/quiz/QuizPage';
 import ResultsPage from './components/quiz/ResultsPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import { AnimatePresence, motion } from 'framer-motion';
+
+const pageVariants = {
+  initial: {
+    opacity: 0,
+    x: '-100vw',
+    scale: 0.8,
+  },
+  in: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+  },
+  out: {
+    opacity: 0,
+    x: '100vw',
+    scale: 1.2,
+  },
+};
+
+const pageTransition = {
+  type: 'tween',
+  ease: 'anticipate',
+  duration: 0.5,
+};
 
 function App() {
+  const location = useLocation();
+
   return (
     <QuizProvider>
-      <Router>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-          <Routes>
-            <Route 
-              path="/" 
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route
+              path="/"
               element={
-                <ProtectedRoute 
-                  allowedCondition={(state) => !state.quizStarted || state.quizCompleted} 
-                  redirectTo="/quiz" 
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
                 >
-                  <QuizConfigPage />
-                </ProtectedRoute>
-              } 
+                  <ProtectedRoute
+                    allowedCondition={(state) => !state.quizStarted || state.quizCompleted}
+                    redirectTo="/quiz"
+                  >
+                    <QuizConfigPage />
+                  </ProtectedRoute>
+                </motion.div>
+              }
             />
-            <Route 
-              path="/quiz" 
+            <Route
+              path="/quiz"
               element={
-                <ProtectedRoute 
-                  allowedCondition={(state) => state.quizStarted && !state.quizCompleted} 
-                  redirectTo={state => state.quizCompleted ? "/results" : "/"} 
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
                 >
-                  <QuizPage />
-                </ProtectedRoute>
-              } 
+                  <ProtectedRoute
+                    allowedCondition={(state) => state.quizStarted && !state.quizCompleted}
+                    redirectTo={(state) => (state.quizCompleted ? '/results' : '/')}
+                  >
+                    <QuizPage />
+                  </ProtectedRoute>
+                </motion.div>
+              }
             />
-            <Route 
-              path="/results" 
+            <Route
+              path="/results"
               element={
-                <ProtectedRoute 
-                  allowedCondition={(state) => state.quizCompleted} 
-                  redirectTo="/" 
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
                 >
-                  <ResultsPage />
-                </ProtectedRoute>
-              } 
+                  <ProtectedRoute
+                    allowedCondition={(state) => state.quizCompleted}
+                    redirectTo="/"
+                  >
+                    <ResultsPage />
+                  </ProtectedRoute>
+                </motion.div>
+              }
             />
           </Routes>
-        </div>
-      </Router>
+        </AnimatePresence>
+      </div>
     </QuizProvider>
   );
 }
 
-export default App
+function AppWrapper() {
+  return (
+    <Router>
+      <App />
+    </Router>
+  );
+}
+
+export default AppWrapper;
