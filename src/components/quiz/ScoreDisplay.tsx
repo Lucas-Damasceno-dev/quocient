@@ -23,19 +23,19 @@ export function ScoreDisplay({ score, total, onRestart }: ScoreDisplayProps) {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto text-center">
-      <CardHeader>
-        <CardTitle className="text-2xl">Quiz Results</CardTitle>
+    <Card className="w-full max-w-md mx-auto text-center p-4 sm:p-6">
+      <CardHeader className="px-4 sm:px-6">
+        <CardTitle className="text-xl sm:text-2xl">Quiz Results</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="text-5xl font-bold text-primary">{score}<span className="text-muted-foreground text-2xl">/{total}</span></div>
-        <div className="text-xl">{percentage}%</div>
-        <p className="text-lg">{message}</p>
-        <p className="text-muted-foreground">
+        <div className="text-4xl sm:text-5xl font-bold text-primary">{score}<span className="text-muted-foreground text-xl sm:text-2xl">/{total}</span></div>
+        <div className="text-lg sm:text-xl">{percentage}%</div>
+        <p className="text-base sm:text-lg">{message}</p>
+        <p className="text-sm sm:text-base text-muted-foreground">
           You answered {score} out of {total} questions correctly.
         </p>
         <div className="pt-4">
-          <Button onClick={onRestart} variant="default" size="lg" className="w-full">
+          <Button onClick={onRestart} variant="default" size="lg" className="w-full text-base sm:text-lg">
             Play Again
           </Button>
         </div>

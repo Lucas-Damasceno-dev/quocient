@@ -39,7 +39,7 @@ export function AnswerOption({
   return (
     <Button
       variant={buttonVariant}
-      className={`w-full justify-start text-left p-4 ${additionalStyles}`}
+      className={`w-full justify-start text-left p-3 sm:p-4 text-sm sm:text-base ${additionalStyles}`}
       onClick={onSelect}
       disabled={disabled}
     >

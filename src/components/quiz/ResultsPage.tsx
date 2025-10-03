@@ -31,14 +31,14 @@ const ResultsPage = () => {
   
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold text-center mb-8">Quiz Results</h1>
+    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-2xl sm:text-3xl font-bold text-center mb-8">Quiz Results</h1>
       
       <div className="flex justify-center mb-6">
-        <div className="text-center bg-white p-6 rounded-lg shadow-md">
-          <div className="text-5xl font-bold text-primary mb-2">{finalScore}<span className="text-muted-foreground text-2xl">/{totalQuestions}</span></div>
-          <div className="text-2xl font-semibold">{percentage}%</div>
-          <p className="mt-2 text-muted-foreground">
+        <div className="text-center bg-white p-4 sm:p-6 rounded-lg shadow-md">
+          <div className="text-4xl sm:text-5xl font-bold text-primary mb-2">{finalScore}<span className="text-muted-foreground text-xl sm:text-2xl">/{totalQuestions}</span></div>
+          <div className="text-xl sm:text-2xl font-semibold">{percentage}%</div>
+          <p className="mt-2 text-sm sm:text-base text-muted-foreground">
             You answered {finalScore} out of {totalQuestions} questions correctly.
           </p>
         </div>
@@ -52,7 +52,7 @@ const ResultsPage = () => {
       
       {/* Optional: Show summary of answered questions */}
       <div className="mt-8 max-w-2xl mx-auto">
-        <h2 className="text-xl font-semibold mb-4">Question Summary</h2>
+        <h2 className="text-lg sm:text-xl font-semibold mb-4">Question Summary</h2>
         <div className="space-y-4">
           {state.questions.map((question, index) => {
             const userAnswer = state.userAnswers.find(
@@ -62,7 +62,7 @@ const ResultsPage = () => {
             return (
               <div 
                 key={question.id || `question-${index}`} 
-                className={`p-4 rounded-lg border ${
+                className={`p-3 sm:p-4 rounded-lg border ${
                   userAnswer?.isCorrect 
                     ? 'bg-green-50 border-green-200' 
                     : userAnswer 
@@ -70,9 +70,9 @@ const ResultsPage = () => {
                       : 'bg-gray-50 border-gray-200'
                 }`}
               >
-                <div className="font-medium">Question {index + 1}: {question.question}</div>
+                <div className="font-medium text-sm sm:text-base">Question {index + 1}: {question.question}</div>
                 <div className="mt-2">
-                  <div className="text-sm">
+                  <div className="text-xs sm:text-sm">
                     <span className="font-semibold">Your answer:</span> {userAnswer?.selectedAnswer || 'Not answered'}
                     {!userAnswer?.isCorrect && userAnswer && (
                       <span className="block mt-1 text-green-600">

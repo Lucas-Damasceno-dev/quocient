@@ -73,11 +73,11 @@ export function ConfigForm({
   const isFormValid = numberOfQuestions > 0 && !errors.numberOfQuestions;
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader className="text-center">
-        <CardTitle>Configure Your Quiz</CardTitle>
+    <Card className="w-full max-w-md mx-auto sm:p-6">
+      <CardHeader className="text-center px-4 sm:px-6">
+        <CardTitle className="text-2xl sm:text-3xl">Configure Your Quiz</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 p-4 sm:p-6">
         <div className="space-y-2">
           <Label htmlFor="number-of-questions" className="flex items-center">
             Number of Questions <span className="text-red-500 ml-1">*</span>
