@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuiz } from '@/context';
 import { decodeHtmlEntities } from '@/services';
 import type { Answer } from '@/types/quiz';
@@ -24,14 +24,14 @@ const QuizPage = () => {
   const total = state.questions.length;
 
   // Handle answer selection
-  const handleAnswerSelect = (answer: string) => {
+  const handleAnswerSelect = useCallback((answer: string) => {
     if (!isAnswered) {
       setSelectedAnswer(answer);
     }
-  };
+  }, [isAnswered]);
 
   // Confirm answer and move to next question
-  const handleConfirmAnswer = () => {
+  const handleConfirmAnswer = useCallback(() => {
     if (!selectedAnswer || isAnswered) return;
 
     setIsAnswered(true);
@@ -66,7 +66,7 @@ const QuizPage = () => {
         setIsAnswered(false);
       }
     }, 1500); // Show feedback for 1.5 seconds
-  };
+  }, [selectedAnswer, isAnswered, currentQuestion, dispatch, state.currentQuestionIndex, state.questions.length]);
 
   
 

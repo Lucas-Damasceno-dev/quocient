@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useQuiz } from '@/context';
 import { ScoreDisplay } from './ScoreDisplay';
 import { RESET_QUIZ } from '@/context/QuizContext';
@@ -21,15 +22,12 @@ const ResultsPage = () => {
   const { state, dispatch } = useQuiz();
   const navigate = useNavigate();
 
-  // Calculate score and percentage
-  const calculateScore = () => {
+  const finalScore = useMemo(() => {
     if (state.userAnswers.length === 0) return 0;
     
     const correctAnswers = state.userAnswers.filter(answer => answer.isCorrect).length;
     return correctAnswers;
-  };
-
-  const finalScore = calculateScore();
+  }, [state.userAnswers]);
   const totalQuestions = state.questions.length;
   const percentage = totalQuestions > 0 ? Math.round((finalScore / totalQuestions) * 100) : 0;
 

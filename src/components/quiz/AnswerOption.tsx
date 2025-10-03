@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { memo } from 'react';
 
 interface AnswerOptionProps {
   text: string;
@@ -10,14 +11,14 @@ interface AnswerOptionProps {
   disabled: boolean;
 }
 
-export function AnswerOption({
+export const AnswerOption = memo(({
   text,
   isSelected,
   isCorrect,
   isIncorrect,
   onSelect,
   disabled
-}: AnswerOptionProps) {
+}: AnswerOptionProps) => {
   let buttonVariant: 'outline' | 'default' | 'link' | 'destructive' 
     | 'secondary' | 'ghost' | null | undefined = 'outline';
   let additionalStyles = '';
@@ -59,4 +60,4 @@ export function AnswerOption({
       </Button>
     </motion.div>
   );
-}
+});
