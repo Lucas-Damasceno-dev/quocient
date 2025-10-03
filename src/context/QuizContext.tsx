@@ -86,7 +86,7 @@ const initialState: QuizState = {
 };
 
 // Reducer function
-const quizReducer = (state: QuizState, action: QuizAction): QuizState => {
+export const quizReducer = (state: QuizState, action: QuizAction): QuizState => {
   switch (action.type) {
     case SET_CONFIG:
       return {
