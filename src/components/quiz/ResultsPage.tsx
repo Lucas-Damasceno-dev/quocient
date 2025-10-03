@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useQuiz } from '@/context';
 import { ScoreDisplay } from './ScoreDisplay';
 import { RESET_QUIZ } from '@/context/QuizContext';

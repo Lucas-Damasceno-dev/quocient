@@ -5,12 +5,12 @@ interface ApiRequestConfig {
   url: string;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   headers?: Record<string, string>;
-  body?: any;
+  body?: Record<string, unknown> | BodyInit | null;
   params?: Record<string, string | number | boolean>;
 }
 
 // Define the structure for the hook's return value
-interface UseApiResult<T = any> {
+interface UseApiResult<T> {
   data: T | null;
   loading: boolean;
   error: string | null;
@@ -41,7 +41,7 @@ const createCacheKey = (config: ApiRequestConfig): string => {
  * @param skip Optional flag to skip the request
  * @returns Object containing data, loading state, error state, and refetch function
  */
-export const useApi = <T = any>(config: ApiRequestConfig, skip: boolean = false): UseApiResult<T> => {
+export const useApi = <T>(config: ApiRequestConfig, skip: boolean = false): UseApiResult<T> => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -116,19 +116,23 @@ export const useApi = <T = any>(config: ApiRequestConfig, skip: boolean = false)
         data: result,
         timestamp: Date.now(),
       });
-    } catch (err: any) {
+    } catch (err) {
       console.error('API Error:', err);
-      setError(err.message || 'An error occurred while fetching data');
+      if (err instanceof Error) {
+        setError(err.message || 'An error occurred while fetching data');
+      } else {
+        setError('An error occurred while fetching data');
+      }
       setData(null);
     } finally {
       setLoading(false);
     }
-  }, [config, skip, refreshTrigger]);
+  }, [config, skip]);
 
   // Execute the API call when dependencies change
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, refreshTrigger]);
 
   // Function to refetch data (bypassing cache)
   const refetch = useCallback(() => {

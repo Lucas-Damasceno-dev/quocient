@@ -6,7 +6,7 @@ import { z } from 'zod';
  * @param config The quiz configuration to validate
  * @returns An object with isValid boolean and errors array
  */
-export const validateQuizConfig = (config: any) => {
+export const validateQuizConfig = (config: z.infer<typeof quizConfigSchema>) => {
   const result = quizConfigSchema.safeParse(config);
   if (result.success) {
     return { isValid: true, errors: [] };
@@ -28,13 +28,13 @@ export const validateQuizConfig = (config: any) => {
  * @param value The value to validate
  * @returns An object with isValid boolean and error message
  */
-export const validateQuizConfigField = (field: keyof z.infer<typeof quizConfigSchema>, value: any) => {
+export const validateQuizConfigField = (field: keyof z.infer<typeof quizConfigSchema>, value: unknown) => {
   try {
     // Create a partial schema for the specific field
     const fieldSchema = quizConfigSchema.shape[field];
     fieldSchema.parse(value);
     return { isValid: true, error: null };
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof z.ZodError) {
       return { isValid: false, error: error.issues[0]?.message || 'Invalid value' };
     }

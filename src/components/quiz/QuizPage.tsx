@@ -1,16 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuiz } from '@/context';
 import { decodeHtmlEntities } from '@/services';
 import type { Answer } from '@/types/quiz';
 import { ProgressBar } from './ProgressBar';
 import { QuestionCard } from './QuestionCard';
 import { ADD_USER_ANSWER, COMPLETE_QUIZ, SET_CURRENT_QUESTION } from '@/context/QuizContext';
-import { useNavigate } from 'react-router-dom';
+
 import { useQuizNavigationGuard } from '@/hooks/useQuizNavigationGuard';
 
 const QuizPage = () => {
   const { state, dispatch } = useQuiz();
-  const navigate = useNavigate();
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
   

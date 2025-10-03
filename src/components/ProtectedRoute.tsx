@@ -1,11 +1,12 @@
 import { Navigate } from 'react-router-dom';
 import { useQuiz } from '@/context';
 import type { ReactNode } from 'react';
+import type { QuizState } from '@/types/quiz';
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  allowedCondition: (state: any) => boolean;
-  redirectTo: string | ((state: any) => string);
+  allowedCondition: (state: QuizState) => boolean;
+  redirectTo: string | ((state: QuizState) => string);
 }
 
 const ProtectedRoute = ({ children, allowedCondition, redirectTo }: ProtectedRouteProps) => {

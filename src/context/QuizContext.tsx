@@ -1,6 +1,8 @@
-import { createContext, useContext, useReducer } from 'react';
+import { useReducer } from 'react';
 import type { ReactNode } from 'react';
 import type { QuizState, QuizConfig, Question, Answer } from '@/types/quiz';
+import { quizReducer, initialState } from './quizReducer';
+import { QuizContext } from './quizContext';
 
 // Define action types
 export const SET_CONFIG = 'SET_CONFIG';
@@ -57,7 +59,7 @@ interface CompleteQuizAction {
 }
 
 // Union type for all actions
-type QuizAction = 
+export type QuizAction = 
   | SetConfigAction
   | SetQuestionsAction
   | SetLoadingAction
@@ -68,106 +70,8 @@ type QuizAction =
   | StartQuizAction
   | CompleteQuizAction;
 
-// Initial state
-const initialState: QuizState = {
-  config: {
-    numberOfQuestions: 10,
-    difficulty: undefined,
-    type: undefined,
-    categoryId: undefined,
-  },
-  questions: [],
-  currentQuestionIndex: 0,
-  userAnswers: [],
-  isLoading: false,
-  error: null,
-  quizStarted: false,
-  quizCompleted: false,
-};
-
-// Reducer function
-export const quizReducer = (state: QuizState, action: QuizAction): QuizState => {
-  switch (action.type) {
-    case SET_CONFIG:
-      return {
-        ...state,
-        config: action.payload,
-      };
-    
-    case SET_QUESTIONS:
-      return {
-        ...state,
-        questions: action.payload,
-        currentQuestionIndex: 0,
-        userAnswers: [],
-        quizCompleted: false,
-      };
-    
-    case SET_LOADING:
-      return {
-        ...state,
-        isLoading: action.payload,
-      };
-    
-    case SET_ERROR:
-      return {
-        ...state,
-        error: action.payload,
-      };
-    
-    case SET_CURRENT_QUESTION:
-      return {
-        ...state,
-        currentQuestionIndex: action.payload,
-      };
-    
-    case ADD_USER_ANSWER:
-      // Check if answer already exists and update it, otherwise add new
-      const existingAnswerIndex = state.userAnswers.findIndex(
-        ans => ans.questionId === action.payload.questionId
-      );
-      
-      let updatedAnswers: Answer[];
-      if (existingAnswerIndex !== -1) {
-        updatedAnswers = [...state.userAnswers];
-        updatedAnswers[existingAnswerIndex] = action.payload;
-      } else {
-        updatedAnswers = [...state.userAnswers, action.payload];
-      }
-      
-      return {
-        ...state,
-        userAnswers: updatedAnswers,
-      };
-    
-    case START_QUIZ:
-      return {
-        ...state,
-        quizStarted: true,
-        quizCompleted: false,
-        error: null,
-      };
-    
-    case COMPLETE_QUIZ:
-      return {
-        ...state,
-        quizCompleted: true,
-        quizStarted: false,
-      };
-    
-    case RESET_QUIZ:
-      return {
-        ...initialState,
-        config: state.config, // Preserve the configuration when resetting
-      };
-    
-    default:
-      return state;
-  }
-};
-
 // Create context
-interface QuizContextType {
+export interface QuizContextType {
   state: QuizState;
   dispatch: React.Dispatch<QuizAction>;
   // Helper methods
@@ -188,8 +92,6 @@ interface QuizContextType {
   isQuizCompleted: () => boolean;
   isQuizStarted: () => boolean;
 }
-
-const QuizContext = createContext<QuizContextType | undefined>(undefined);
 
 // Provider component
 interface QuizProviderProps {
@@ -285,13 +187,4 @@ export const QuizProvider = ({ children }: QuizProviderProps) => {
       {children}
     </QuizContext.Provider>
   );
-};
-
-// Custom hook to use the quiz context
-export const useQuiz = () => {
-  const context = useContext(QuizContext);
-  if (context === undefined) {
-    throw new Error('useQuiz must be used within a QuizProvider');
-  }
-  return context;
 };

@@ -1,4 +1,5 @@
-import { quizReducer, SET_CONFIG, SET_QUESTIONS, ADD_USER_ANSWER, COMPLETE_QUIZ, RESET_QUIZ } from './QuizContext';
+import { quizReducer } from './quizReducer';
+import { SET_CONFIG, SET_QUESTIONS, ADD_USER_ANSWER, COMPLETE_QUIZ, RESET_QUIZ } from './QuizContext';
 import type { QuizState, QuizConfig, Question, Answer } from '@/types/quiz';
 
 const initialState: QuizState = {
