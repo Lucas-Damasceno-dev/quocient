@@ -1,26 +1,48 @@
+/**
+ * @file Custom hook for making API calls with caching and refetching capabilities.
+ */
+
 import { useState, useEffect, useCallback } from 'react';
 
-// Define the structure for API request configuration
+/**
+ * Configuration for an API request.
+ */
 interface ApiRequestConfig {
+  /** The URL for the API request. */
   url: string;
+  /** The HTTP method to use for the request. */
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  /** The headers to include in the request. */
   headers?: Record<string, string>;
+  /** The body of the request. */
   body?: Record<string, unknown> | BodyInit | null;
+  /** The URL parameters to include in the request. */
   params?: Record<string, string | number | boolean>;
 }
 
-// Define the structure for the hook's return value
+/**
+ * The result of an API request made with the useApi hook.
+ * @template T The expected type of the data returned by the API.
+ */
 interface UseApiResult<T> {
+  /** The data returned by the API. */
   data: T | null;
+  /** Whether the API request is currently in progress. */
   loading: boolean;
+  /** Any error that occurred during the API request. */
   error: string | null;
+  /** A function to refetch the data from the API. */
   refetch: () => void;
 }
 
 // Cache to store API responses
-const apiCache = new Map();
+const apiCache = new Map<string, { data: any; timestamp: number }>();
 
-// Function to create cache key based on request configuration
+/**
+ * Creates a cache key for an API request based on its configuration.
+ * @param config The configuration for the API request.
+ * @returns A unique cache key for the request.
+ */
 const createCacheKey = (config: ApiRequestConfig): string => {
   const { url, method = 'GET', params = {}, body } = config;
   
@@ -36,14 +58,15 @@ const createCacheKey = (config: ApiRequestConfig): string => {
 };
 
 /**
- * Custom hook for making API calls with loading, error, and caching functionality
- * @param config API request configuration
- * @param skip Optional flag to skip the request
- * @returns Object containing data, loading state, error state, and refetch function
+ * A custom hook for making API calls with loading, error, and caching functionality.
+ * @template T The expected type of the data returned by the API.
+ * @param config The configuration for the API request.
+ * @param skip Whether to skip the initial API request.
+ * @returns An object containing the data, loading state, error, and a refetch function.
  */
 export const useApi = <T>(config: ApiRequestConfig, skip: boolean = false): UseApiResult<T> => {
   const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(!skip);
   const [error, setError] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
 
@@ -65,7 +88,7 @@ export const useApi = <T>(config: ApiRequestConfig, skip: boolean = false): UseA
       if (apiCache.has(cacheKey)) {
         const cachedResult = apiCache.get(cacheKey);
         // Use cached value for 5 minutes (300000ms)
-        if (Date.now() - cachedResult.timestamp < 300000) {
+        if (cachedResult && Date.now() - cachedResult.timestamp < 300000) {
           setData(cachedResult.data);
           setLoading(false);
           return;
@@ -134,7 +157,9 @@ export const useApi = <T>(config: ApiRequestConfig, skip: boolean = false): UseA
     fetchData();
   }, [fetchData, refreshTrigger]);
 
-  // Function to refetch data (bypassing cache)
+  /**
+   * A function to refetch the data from the API, bypassing the cache.
+   */
   const refetch = useCallback(() => {
     // Remove cached entry if exists
     const cacheKey = createCacheKey(config);
@@ -152,16 +177,16 @@ export const useApi = <T>(config: ApiRequestConfig, skip: boolean = false): UseA
 };
 
 /**
- * Function to clear the API cache
+ * Clears the entire API cache.
  */
 export const clearApiCache = (): void => {
   apiCache.clear();
 };
 
 /**
- * Function to clear specific cache entries
- * @param url URL to clear from cache
- * @param method HTTP method (optional)
+ * Clears specific cache entries from the API cache based on a URL.
+ * @param url The URL to clear from the cache.
+ * @param method The HTTP method of the requests to clear from the cache.
  */
 export const clearApiCacheByUrl = (url: string, method?: string): void => {
   for (const [key] of apiCache) {
