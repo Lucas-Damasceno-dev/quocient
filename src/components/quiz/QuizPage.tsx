@@ -55,7 +55,6 @@ const QuizPage = () => {
       // If it's the last question, complete the quiz
       if (state.currentQuestionIndex === state.questions.length - 1) {
         dispatch({ type: COMPLETE_QUIZ });
-        navigate('/results'); // Navigate to results page after completing quiz
       } else {
         // Move to next question
         dispatch({ 
@@ -70,15 +69,7 @@ const QuizPage = () => {
     }, 1500); // Show feedback for 1.5 seconds
   };
 
-  // If quiz is not started or completed, redirect to config
-  if (!state.quizStarted || state.quizCompleted) {
-    useEffect(() => {
-      if (!state.quizStarted) {
-        navigate('/');
-      }
-    }, [state.quizStarted, navigate]);
-    return null;
-  }
+  
 
   // If no questions are loaded, show loading or redirect
   if (state.questions.length === 0) {

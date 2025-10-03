@@ -28,12 +28,7 @@ const ResultsPage = () => {
     navigate('/');
   };
 
-  // Redirect if quiz is not completed yet
-  useEffect(() => {
-    if (!state.quizCompleted) {
-      navigate('/quiz');
-    }
-  }, [state.quizCompleted, navigate]);
+  
 
   return (
     <div className="container mx-auto py-8">

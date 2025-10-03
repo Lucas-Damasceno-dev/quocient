@@ -27,7 +27,7 @@ function App() {
               element={
                 <ProtectedRoute 
                   allowedCondition={(state) => state.quizStarted && !state.quizCompleted} 
-                  redirectTo={state => !state.quizStarted ? "/" : state.quizCompleted ? "/results" : "/"} 
+                  redirectTo={state => state.quizCompleted ? "/results" : "/"} 
                 >
                   <QuizPage />
                 </ProtectedRoute>

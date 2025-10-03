@@ -41,8 +41,7 @@ export interface QuizState {
 
 // API Response Types
 export interface CategoryApiResponse {
-  response_code: number;
-  categories: {
+  trivia_categories: {
     id: number;
     name: string;
   }[];

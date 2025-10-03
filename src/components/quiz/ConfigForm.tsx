@@ -14,7 +14,7 @@ interface Category {
 
 interface ConfigFormProps {
   config: QuizConfig;
-  categories: Category[];
+  categories?: Category[];
   onConfigChange: (config: QuizConfig) => void;
   onStartQuiz: () => void;
   isLoading: boolean;
@@ -106,11 +106,17 @@ export function ConfigForm({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="any">Any Category</SelectItem>
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id.toString()}>
-                  {category.name}
+              {categories && categories.length > 0 ? (
+                categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id.toString()}>
+                    {category.name}
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem value="no-categories" disabled>
+                  No categories available
                 </SelectItem>
-              ))}
+              )}
             </SelectContent>
           </Select>
         </div>

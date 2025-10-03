@@ -22,7 +22,9 @@ const QuizConfigPage = () => {
         setIsLoadingCategories(true);
         setError(null);
         const response = await getCategories();
-        setCategories(response.categories);
+      console.log('API Response for categories:', response);
+      setCategories(response.trivia_categories);
+      console.log('Categories after setting state:', response.trivia_categories);
       } catch (err) {
         console.error('Error fetching categories:', err);
         setError('Failed to load categories. Please try again later.');
