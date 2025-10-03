@@ -5,6 +5,7 @@ import QuizPage from './components/quiz/QuizPage';
 import ResultsPage from './components/quiz/ResultsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AnimatePresence, motion } from 'framer-motion';
+import type { Transition } from 'framer-motion';
 
 const pageVariants = {
   initial: {
@@ -24,7 +25,7 @@ const pageVariants = {
   },
 };
 
-const pageTransition = {
+const pageTransition: Transition = {
   type: 'tween',
   ease: 'anticipate',
   duration: 0.5,

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useQuiz } from '@/context';
 import { decodeHtmlEntities } from '@/services';
 import type { Answer } from '@/types/quiz';
@@ -8,10 +8,13 @@ import { ADD_USER_ANSWER, COMPLETE_QUIZ, SET_CURRENT_QUESTION } from '@/context/
 
 import { useQuizNavigationGuard } from '@/hooks/useQuizNavigationGuard';
 
+const QUIZ_TIME = 30;
+
 const QuizPage = () => {
   const { state, dispatch } = useQuiz();
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
+  const [timer, setTimer] = useState(QUIZ_TIME);
   
   // Add navigation guard to prevent leaving during quiz
   useQuizNavigationGuard();
@@ -64,9 +67,26 @@ const QuizPage = () => {
         // Reset state for next question
         setSelectedAnswer(null);
         setIsAnswered(false);
+        setTimer(QUIZ_TIME);
       }
     }, 1500); // Show feedback for 1.5 seconds
   }, [selectedAnswer, isAnswered, currentQuestion, dispatch, state.currentQuestionIndex, state.questions.length]);
+
+  useEffect(() => {
+    if (isAnswered) return;
+
+    const interval = setInterval(() => {
+      setTimer(prev => {
+        if (prev === 1) {
+          handleConfirmAnswer();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isAnswered, handleConfirmAnswer]);
 
   
 
@@ -92,6 +112,12 @@ const QuizPage = () => {
     <div className="container mx-auto py-8 transition-all duration-300 ease-in-out">
       <h1 className="text-2xl font-bold text-center mb-6 transition-all duration-300 ease-in-out">Quiz Time!</h1>
       
+      <div className="flex justify-center items-center mb-4">
+        <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+          {timer}s
+        </div>
+      </div>
+
       {/* Progress bar */}
       <div className="mb-6 transition-all duration-300 ease-in-out">
         <ProgressBar current={progress} total={total} />

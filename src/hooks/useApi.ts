@@ -3,6 +3,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import axios, { AxiosRequestConfig } from 'axios';
 
 /**
  * Configuration for an API request.
@@ -15,7 +16,7 @@ interface ApiRequestConfig {
   /** The headers to include in the request. */
   headers?: Record<string, string>;
   /** The body of the request. */
-  body?: Record<string, unknown> | BodyInit | null;
+  data?: Record<string, unknown> | BodyInit | null;
   /** The URL parameters to include in the request. */
   params?: Record<string, string | number | boolean>;
 }
@@ -44,7 +45,7 @@ const apiCache = new Map<string, { data: any; timestamp: number }>();
  * @returns A unique cache key for the request.
  */
 const createCacheKey = (config: ApiRequestConfig): string => {
-  const { url, method = 'GET', params = {}, body } = config;
+  const { url, method = 'GET', params = {}, data } = config;
   
   // Sort parameters for consistent cache key
   const sortedParams = Object.keys(params)
@@ -54,7 +55,7 @@ const createCacheKey = (config: ApiRequestConfig): string => {
       return acc;
     }, {} as Record<string, string | number | boolean>);
 
-  return `${method}:${url}?${JSON.stringify(sortedParams)}:${JSON.stringify(body)}`;
+  return `${method}:${url}?${JSON.stringify(sortedParams)}:${JSON.stringify(data)}`;
 };
 
 /**
@@ -98,40 +99,22 @@ export const useApi = <T>(config: ApiRequestConfig, skip: boolean = false): UseA
         }
       }
 
-      // Construct the URL with query parameters
-      const url = new URL(config.url, window.location.origin);
-      
-      // Add parameters to the URL
-      if (config.params) {
-        Object.entries(config.params).forEach(([key, value]) => {
-          if (value !== undefined && value !== null) {
-            url.searchParams.append(key, String(value));
-          }
-        });
-      }
-
-      // Prepare fetch options
-      const fetchOptions: RequestInit = {
+      // Prepare axios options
+      const axiosOptions: AxiosRequestConfig = {
+        url: config.url,
         method: config.method || 'GET',
         headers: {
           'Content-Type': 'application/json',
           ...config.headers,
         },
+        params: config.params,
+        data: config.data,
       };
 
-      // Add body for non-GET requests
-      if (config.method && !['GET', 'HEAD'].includes(config.method) && config.body) {
-        fetchOptions.body = JSON.stringify(config.body);
-      }
-
       // Make the API call
-      const response = await fetch(url.toString(), fetchOptions);
+      const response = await axios(axiosOptions);
 
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-      }
-
-      const result = await response.json();
+      const result = response.data;
       setData(result);
 
       // Cache the result
@@ -141,7 +124,9 @@ export const useApi = <T>(config: ApiRequestConfig, skip: boolean = false): UseA
       });
     } catch (err) {
       console.error('API Error:', err);
-      if (err instanceof Error) {
+      if (axios.isAxiosError(err)) {
+        setError(err.message || 'An error occurred while fetching data');
+      } else if (err instanceof Error) {
         setError(err.message || 'An error occurred while fetching data');
       } else {
         setError('An error occurred while fetching data');
